@@ -139,7 +139,7 @@ $ids = array();
               var altura=  $("#conversation").prop("scrollHeight")
               $("#conversation").scrollTop(altura);
 
-              console.info(info)
+              
           })
         }
       }
@@ -176,7 +176,7 @@ $ids = array();
           type:"post",
           url:"consultar.php",
         }).done(function (info) {//respuesta de la primera
-          
+
           if (info==1) {
             $.ajax({
               type:"post",
