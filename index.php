@@ -17,8 +17,8 @@
            <input type="text" class="form-control" name="usuario" placeholder="Usuario" aria-describedby="basic-addon1">
           </div>
           <div class="input-group">
-           <span class="input-group-addon" id="basic-addon1">P</span>
-           <input type="password" class="form-control" name="pass" placeholder="Usuario" aria-describedby="basic-addon1">
+           <span class="input-group-addon" id="basic-addon1">¬</span>
+           <input type="password" class="form-control" name="pass" placeholder="Contraseña" aria-describedby="basic-addon1">
           </div>
           <div class="input-group">
              <button type="submit" class="btn btn-primary">Entrar</button>

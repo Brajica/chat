@@ -1,20 +1,33 @@
 <?php
-session_start();
-$bd="chat";
-$server="localhost";
-$user="root";
- $password="";
-   $conexion=mysqli_connect($server,$user,$password,$bd);
 
-   $sesion=$_SESSION['email'];
- if (!$conexion) die("error conexion".mysqli_connect_error());
- $sql="SELECT * FROM conversacion WHERE id_emisor='$sesion' or id_receptor='$sesion'
-  order by id desc ";
- $con=0;
- $result=mysqli_query($conexion,$sql);
- $c=mysqli_num_rows($result);
- $m=null;
-  $ids = array();
+ require_once 'conectar.php';
+
+ class msj
+ {
+
+   function __construct()
+   {
+      $this->con = new Database();
+   }
+   public function leer()
+   {
+     session_start();
+      $sesion=$_SESSION['email'];
+       $sql=$this->con->prepare("SELECT * FROM conversacion WHERE id_emisor=:emisor or id_receptor=:receptor
+       order by id desc ");
+       $sql->bindParam(":emisor",$sesion);
+       $sql->bindParam(":receptor",$sesion);
+       $sql->execute();
+       $c=$sql->rowCount();
+       $result=$sql->fetchAll();
+       return array ($result, $c);
+   }
+ }
+
+$clase=new msj();
+$result=$clase->leer();
+$c=$result[1];
+$ids = array();
  ?>
 <!doctype html>
 <html lang="es">
@@ -29,7 +42,7 @@ $user="root";
          <div class="col-md-3">
            <ul id="listas" class="list-group">
              <?php
-             foreach ($result as $value  ) {
+             foreach ($result[0] as $value  ) {
                if (isset($ids[$value['id_conversacion']])) {
 
                }else{
@@ -37,14 +50,12 @@ $user="root";
                }
 
              }
+             if ($result[1]>0) {
 
-             $con=0;
-             if ($c>0) {
                foreach ($ids as $a) {
-
                    if ($a['estado_msj']=='nv') {
                      if ($a['id_emisor']==$_SESSION['email']) {
-                        $m = '<a id="'.$a['id_conversacion'].'" style="background-color:#090" href="#" class="list-group-item" onclick="vermsj(this)">'.$a['id_receptor'].'</a>';
+                        $m = '<a id="'.$a['id_conversacion'].'"  href="#" class="list-group-item" onclick="vermsj(this)">'.$a['id_receptor'].'</a>';
                      }elseif ($a['id_receptor']==$_SESSION['email']) {
                          $m = '<a id="'.$a['id_conversacion'].'" style="background-color:#090" href="#" class="list-group-item" onclick="vermsj(this)">'.$a['id_emisor'].'</a>';
                      }
@@ -165,12 +176,13 @@ $user="root";
           type:"post",
           url:"consultar.php",
         }).done(function (info) {//respuesta de la primera
-
+          
           if (info==1) {
             $.ajax({
               type:"post",
               url:"msjnv.php",
               }).done(function (info) {
+
 
                  $("#listas").html(info)
               })//aqui termin la respuesta d ela segunda
